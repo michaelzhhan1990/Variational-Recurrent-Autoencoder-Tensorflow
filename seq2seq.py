@@ -294,12 +294,15 @@ def embedding_rnn_decoder(decoder_inputs,
       embedding = variable_scope.get_variable("embedding", [num_symbols, embedding_size],
               initializer=weight_initializer())
 
+    '''
     if beam_size > 1:
         loop_function = _extract_beam_search(
         embedding, beam_size,num_symbols,embedding_size,  output_projection,
         update_embedding_for_previous)
     else:
-        loop_function = _extract_argmax_and_embed(
+    '''
+
+    loop_function = _extract_argmax_and_embed(
         embedding, output_projection,
         update_embedding_for_previous) if feed_previous else None
 

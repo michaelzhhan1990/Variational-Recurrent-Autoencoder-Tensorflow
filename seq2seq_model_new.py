@@ -181,3 +181,26 @@ class Seq2SeqModel(object):
                      use_lstm=use_lstm,
                      enc_state_bidirectional=bidirectional,
                      dtype=dtype)
+
+    def latent_dec_f(latent_vector):
+      return seq2seq.latent_to_decoder(latent_vector,
+           embedding_size=size,
+           latent_dim=latent_dim,
+           num_layers=num_layers,
+           activation=activation,
+           use_lstm=use_lstm,
+           dtype=dtype)
+
+
+    def sample_f(mean, logvar):
+      return seq2seq.sample(
+           mean,
+           logvar,
+           latent_dim,
+           iaf,
+           kl_min,
+           anneal,
+           self.kl_rate,
+           dtype)
+
+    # The seq2seq function: we use embedding for the input and attention.
