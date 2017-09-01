@@ -130,7 +130,8 @@ def embedding_encoder(encoder_inputs,
     if not embedding:
       embedding = variable_scope.get_variable("embedding", [num_symbols, embedding_size],
               initializer=weight_initializer())
-    emb_inp = [embedding_ops.embedding_lookup(embedding, i) for i in encoder_inputs]
+
+    emb_inp = [tf.nn.embedding_lookup(embedding, i) for i in encoder_inputs]
     if bidirectional:
       _, output_state_fw, output_state_bw = tf.contrib.rnn.static_bidirectional_rnn(cell, cell, emb_inp,
               dtype=dtype)
@@ -176,6 +177,7 @@ def beam_rnn_decoder(decoder_inputs, initial_state, cell, loop_function=None,
     log_beam_probs, beam_path, beam_symbols = [],[],[]
     state_size = int(initial_state.get_shape().with_rank(2)[1])
 
+    #inp is not set any valule yet, just a place holder
     for i, inp in enumerate(decoder_inputs):
       if loop_function is not None and prev is not None:
         with variable_scope.variable_scope("loop_function", reuse=True):
@@ -189,7 +191,7 @@ def beam_rnn_decoder(decoder_inputs, initial_state, cell, loop_function=None,
 
       if loop_function is not None:
         prev = output
-      if  i ==0:
+      if  i ==0:  #only initlilize it in the beginning
           states =[]
           for kk in range(beam_size):
                 states.append(state)

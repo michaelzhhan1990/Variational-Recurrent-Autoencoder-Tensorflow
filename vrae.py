@@ -63,7 +63,7 @@ def prelu(x):
 # We use a number of buckets and pad to the closest one for efficiency.
 # See seq2seq_model.Seq2SeqModel for details of how they work.
 
-
+# read data to bucket
 def read_data(source_path, target_path, config, max_size=None):
   """Read data from source and target files and put into buckets.
 
