@@ -34,15 +34,15 @@ def main(_):
   if FLAGS.do == "reconstruct":
     with tf.Session() as sess:
       model = create_model(sess, enc_dec_config, True)
-      reconstruct(sess, model, enc_dec_config)
+      #reconstruct(sess, model, enc_dec_config)
   elif FLAGS.do == "interpolate":
     with tf.Session() as sess:
       model = create_model(sess, interp_config, True)
-      encode_interpolate(sess, model, interp_config)
+      #encode_interpolate(sess, model, interp_config)
   elif FLAGS.do == "sample":
     with tf.Session() as sess:
       model = create_model(sess, sample_config, True)
-      n_sample(sess, model, config)
+      #n_sample(sess, model, config)
   elif FLAGS.do == "train":
     train(config)
 
