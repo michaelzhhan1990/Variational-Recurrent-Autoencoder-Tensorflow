@@ -5,6 +5,7 @@ tf.app.flags.DEFINE_boolean("new", True, "whether this is a new model or not.")
 tf.app.flags.DEFINE_string("do", "train", "what to do. accepts train, interpolate, sample, and decode.")
 tf.app.flags.DEFINE_string("input", None, "input filename for reconstruct sample, and interpolate.")
 tf.app.flags.DEFINE_string("output", None, "output filename for reconstruct sample, and interpolate.")
+
 FLAGS = tf.app.flags.FLAGS
 
 def prelu(x):

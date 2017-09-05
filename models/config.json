@@ -28,6 +28,20 @@
     "word_dropout_keep_prob": 0.0,
     "anneal": false
   },
+  "test_embedding": {
+    "batch_size": 256,
+    "beam_size": 1,
+    "learning_rate": 0.001,
+    "kl_rate_rise_factor": 0.001,
+    "kl_rate_rise_time": 50000,
+    "max_train_data_size": 0,
+    "steps_per_checkpoint": 2000,
+    "feed_previous": true,
+    "kl_min": 4,
+    "max_gradient_norm": 5.0,
+    "word_dropout_keep_prob": 0.0,
+    "anneal": false
+  },
   "reconstruct": {
     "feed_previous": true,
     "word_dropout_keep_prob": 0.0
