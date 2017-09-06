@@ -27,6 +27,8 @@ from six.moves import urllib
 
 from tensorflow.python.platform import gfile
 import tensorflow as tf
+import numpy as np
+
 
 # Special vocabulary symbols - we always put them at the start.
 _PAD = "_PAD"
@@ -39,6 +41,7 @@ PAD_ID = 0
 GO_ID = 1
 EOS_ID = 2
 UNK_ID = 3
+
 
 # Regular expressions used to tokenize.
 _WORD_SPLIT = re.compile("([.,!?\"':;)(])")
@@ -80,7 +83,26 @@ def basic_tokenizer(sentence):
   return [w for w in words if w]
 
 
-def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding_path,
+def loadGloVe(filename,normalize_digits=True):
+    vocab = []
+    embd = []
+    embd_dic={}
+    file = open(filename, encoding='utf8')
+    for line in file.readlines():
+        row = line.strip().split(' ')
+        w=row[0]
+        # make it consistent
+        word = _DIGIT_RE.sub("0", w) if normalize_digits else w
+        vocab.append(word)
+        embd.append(row[1:])
+        embd_dic[vocab[-1]]=embd[-1]
+    print('Loaded GloVe!')
+    file.close()
+    return vocab, embd,embd_dic
+
+
+
+def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding_path=None,
                       tokenizer=None, normalize_digits=True):
   """Create vocabulary file (if it does not exist yet) from data file.
 
@@ -98,9 +120,9 @@ def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding
       if None, basic_tokenizer will be used.
     normalize_digits: Boolean; if true, all digits are replaced by 0s.
   """
-  if not gfile.Exists(vocabulary_path) or not gfile.Exists(embedding_path):
+  embedding=None
+  if not gfile.Exists(vocabulary_path) :
     print("Creating vocabulary %s from data %s" % (vocabulary_path, data_path))
-    print("Creating embedding file %s from data %s" % (embedding_path, data_path))
     vocab = {}
     with gfile.GFile(data_path, mode="r") as f:
       counter = 0
@@ -118,11 +140,37 @@ def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding
       vocab_list = _START_VOCAB + sorted(vocab, key=vocab.get, reverse=True)
       if len(vocab_list) > max_vocabulary_size:
         vocab_list = vocab_list[:max_vocabulary_size]
+
+      id2embd_dic=None
+      if embedding_path !=None:
+        embd_dic,embedding_dimension=loadGloVe(embedding_path)
+        embd_dic['_PAD']=[PAD_ID] * embedding_dimension
+        embd_dic['_GO'] = [GO_ID] * embedding_dimension
+        embd_dic['_EOS'] = [EOS_ID] * embedding_dimension
+        embd_dic['_UNK'] = [UNK_ID] * embedding_dimension
+
+        id2embd_dic=[]
+
       with gfile.GFile(vocabulary_path, mode="wb") as vocab_file:
-        with gfile.GFile(embedding_path, mode="wb") as embedding_file:
-          for w in vocab_list:
+          for id, w in enumerate(vocab_list):
             vocab_file.write(w + "\n")
-            embedding_file.write(w + "\n")
+
+            if embedding_path!=None:
+              if w in embd_dic:
+                id2embd_dic.append(embd_dic[w])
+              else:  #in vocab but no embdding
+                id2embd_dic.append(embd_dic['_UNK'])
+          if embedding_path!=None:
+            embedding = np.asarray(id2embd_dic)
+
+  return embedding
+
+
+
+
+
+
+
 
 
 def initialize_vocabulary(vocabulary_path):
@@ -234,6 +282,8 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
       (4) path to the token-ids for French development data-set,
       (5) path to the English vocabulary file,
       (6) path to the French vocabulary file.
+      (7) embedding dictionary(id, embedding)
+
   """
   # Get wmt data to the specified directory.
   train_path = os.path.join(data_dir, "train.txt")
@@ -243,10 +293,10 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
   fr_vocab_path = os.path.join(data_dir, "vocab%d.out" % fr_vocabulary_size)
   en_vocab_path = os.path.join(data_dir, "vocab%d.in" % en_vocabulary_size)
   create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,
-          os.path.join(data_dir, "dec_embedding{0}.tsv".format(fr_vocabulary_size)),
+          #os.path.join(data_dir, "dec_embedding{0}.tsv".format(fr_vocabulary_size)),
           tokenizer)
   create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,
-          os.path.join(data_dir, "enc_embedding{0}.tsv".format(en_vocabulary_size)),
+          #os.path.join(data_dir, "enc_embedding{0}.tsv".format(en_vocabulary_size)),
           tokenizer)
 
 
