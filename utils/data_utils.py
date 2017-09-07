@@ -102,7 +102,7 @@ def loadGloVe(filename,normalize_digits=True):
 
 
 
-def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding_path=None,
+def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding_path=None, W,
                       tokenizer=None, normalize_digits=True):
   """Create vocabulary file (if it does not exist yet) from data file.
 
@@ -120,7 +120,6 @@ def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding
       if None, basic_tokenizer will be used.
     normalize_digits: Boolean; if true, all digits are replaced by 0s.
   """
-  embedding=None
   if not gfile.Exists(vocabulary_path) :
     print("Creating vocabulary %s from data %s" % (vocabulary_path, data_path))
     vocab = {}
@@ -143,11 +142,11 @@ def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding
 
       id2embd_dic=None
       if embedding_path !=None:
-        embd_dic,embedding_dimension=loadGloVe(embedding_path)
-        embd_dic['_PAD']=[PAD_ID] * embedding_dimension
-        embd_dic['_GO'] = [GO_ID] * embedding_dimension
-        embd_dic['_EOS'] = [EOS_ID] * embedding_dimension
-        embd_dic['_UNK'] = [UNK_ID] * embedding_dimension
+        embd_dic,embedding_dim=loadGloVe(embedding_path)
+        embd_dic['_PAD']=[PAD_ID] * embedding_dim
+        embd_dic['_GO'] = [GO_ID] * embedding_dim
+        embd_dic['_EOS'] = [EOS_ID] * embedding_dim
+        embd_dic['_UNK'] = [UNK_ID] * embedding_dim
 
         id2embd_dic=[]
 
@@ -163,7 +162,15 @@ def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding
           if embedding_path!=None:
             embedding = np.asarray(id2embd_dic)
 
-  return embedding
+            W_ = tf.Variable(tf.constant(0.0, shape=[len(vocab_list), embedding_dim]),
+                             trainable=False, name="W")
+
+            embedding_placeholder = tf.placeholder(tf.float32, [len(vocab_list), embedding_dim])
+            embedding_init = W.assign(embedding_placeholder)
+            tf.session.run(embedding_init, feed_dict={embedding_placeholder: embedding})
+
+  #W is the actual tensor of embeddings for each vocabulary
+
 
 
 
@@ -292,8 +299,12 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
   # Create vocabularies of the appropriate sizes.
   fr_vocab_path = os.path.join(data_dir, "vocab%d.out" % fr_vocabulary_size)
   en_vocab_path = os.path.join(data_dir, "vocab%d.in" % en_vocabulary_size)
+
+  w_fr=None
+
   create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,
           #os.path.join(data_dir, "dec_embedding{0}.tsv".format(fr_vocabulary_size)),
+          w_fr ,
           tokenizer)
   create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,
           #os.path.join(data_dir, "enc_embedding{0}.tsv".format(en_vocabulary_size)),
