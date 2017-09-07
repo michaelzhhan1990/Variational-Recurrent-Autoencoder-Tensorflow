@@ -102,7 +102,7 @@ def loadGloVe(filename,normalize_digits=True):
 
 
 
-def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding_path=None, W,
+def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size, embd_matrix_tensor, embedding_path=None,
                       tokenizer=None, normalize_digits=True):
   """Create vocabulary file (if it does not exist yet) from data file.
 
@@ -162,14 +162,14 @@ def create_vocabulary(vocabulary_path, data_path, max_vocabulary_size, embedding
           if embedding_path!=None:
             embedding = np.asarray(id2embd_dic)
 
-            W_ = tf.Variable(tf.constant(0.0, shape=[len(vocab_list), embedding_dim]),
-                             trainable=False, name="W")
+            embd_matrix_tensor_ = tf.Variable(tf.constant(0.0, shape=[len(vocab_list), embedding_dim]),
+                             trainable=False, name="embd_matrix_tensor")
 
             embedding_placeholder = tf.placeholder(tf.float32, [len(vocab_list), embedding_dim])
-            embedding_init = W.assign(embedding_placeholder)
+            embedding_init = embd_matrix_tensor.assign(embedding_placeholder)
             tf.session.run(embedding_init, feed_dict={embedding_placeholder: embedding})
 
-  #W is the actual tensor of embeddings for each vocabulary
+  #embd_ is the actual tensor of embeddings for each vocabulary
 
 
 
@@ -271,7 +271,7 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
 
 
 def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
-        load_embeddings=False, tokenizer=None):
+        embedding_path_en=None, embedding_path_fr=None,tokenizer=None):
   """Get WMT data into data_dir, create vocabularies and tokenize data.
 
   Args:
@@ -301,20 +301,14 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
   en_vocab_path = os.path.join(data_dir, "vocab%d.in" % en_vocabulary_size)
 
   w_fr=None
+  w_en=None
 
-  create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,
-          #os.path.join(data_dir, "dec_embedding{0}.tsv".format(fr_vocabulary_size)),
-          w_fr ,
-          tokenizer)
-  create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,
-          #os.path.join(data_dir, "enc_embedding{0}.tsv".format(en_vocabulary_size)),
-          tokenizer)
+  create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,w_fr ,
+          embedding_path_fr,tokenizer)
+  create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,w_en,
+          embedding_path_en,tokenizer)
 
 
-  #if load_embeddings:
-    #embed_utils.save_embeddings(fr_vocab_path, "embed5000.txt")
-    #embed_utils.save_embeddings(en_vocab_path, "embed5000.txt")
-    
 
   # Create token ids for the training data.
   fr_train_ids_path = train_path + (".ids%d.out" % fr_vocabulary_size)
@@ -330,4 +324,4 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
 
   return (en_train_ids_path, fr_train_ids_path,
           en_dev_ids_path, fr_dev_ids_path,
-          en_vocab_path, fr_vocab_path)
+          en_vocab_path, fr_vocab_path,w_en,w_fr)
