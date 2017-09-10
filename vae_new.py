@@ -51,7 +51,7 @@ def main(_):
       model = create_model(sess, sample_config, True)
       #n_sample(sess, model, config)
   #elif FLAGS.do == "train":
-    #train(config)
+  #  train(config)
   elif FLAGS.do == 'test_embedding':
     test_embedding(config)
 

@@ -98,7 +98,7 @@ def loadGloVe(filename,normalize_digits=True):
         embd_dic[vocab[-1]]=embd[-1]
     print('Loaded GloVe!')
     file.close()
-    return vocab, embd,embd_dic
+    return embd_dic,len(embd[0])
 
 
 
@@ -141,6 +141,8 @@ def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size, embd_matri
         vocab_list = vocab_list[:max_vocabulary_size]
 
       id2embd_dic=None
+      embedding_dim=0
+      embd_dic={}
       if embedding_path !=None:
         embd_dic,embedding_dim=loadGloVe(embedding_path)
         embd_dic['_PAD']=[PAD_ID] * embedding_dim

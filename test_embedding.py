@@ -52,7 +52,11 @@ def test_embedding(config):
 
   #print("Preparing WMT data in %s" % config.data_dir)
   en_train, fr_train, en_dev, fr_dev, _, _ ,embd_mat_en,embd_mat_fr= data_utils.prepare_wmt_data(
-      config.data_dir, config.en_vocab_size, config.fr_vocab_size, config.load_embeddings)
+      config.data_dir, config.en_vocab_size, config.fr_vocab_size,config.embedding_en_path,config.embedding_fr_path)
+
+  print('stop')
+
+
 
 
 

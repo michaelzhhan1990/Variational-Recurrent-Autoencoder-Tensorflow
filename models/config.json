@@ -12,7 +12,9 @@
     "probabilistic": true,
     "orthogonal_initializer": true,
     "iaf": true,
-    "activation": "prelu"
+    "activation": "prelu",
+    "embedding_en_path": "C:\\Users\\hanzhan\\Source\\DL\\Variational-Recurrent-Autoencoder-Tensorflow\\corpus\\glove.6B.50d.txt",
+    "embedding_fr_path": "C:\\Users\\hanzhan\\Source\\DL\\Variational-Recurrent-Autoencoder-Tensorflow\\corpus\\glove.6B.50d.txt"    
   },
   "train": {
     "batch_size": 256,
@@ -40,7 +42,7 @@
     "kl_min": 4,
     "max_gradient_norm": 5.0,
     "word_dropout_keep_prob": 0.0,
-    "anneal": false
+    "anneal": false  
   },
   "reconstruct": {
     "feed_previous": true,
