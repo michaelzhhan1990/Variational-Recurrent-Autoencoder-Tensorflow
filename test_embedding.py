@@ -44,6 +44,8 @@ def read_embedding(filename):
 
     return embedding,vocab,vocab_size,embedding_dim
 
+
+
 def test_embedding(config):
   """Train a en->fr translation model using WMT data."""
   # Prepare WMT data.

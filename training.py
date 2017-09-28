@@ -64,8 +64,8 @@ def train(config):
   """Train a en->fr translation model using WMT data."""
   # Prepare WMT data.
   print("Preparing WMT data in %s" % config.data_dir)
-  en_train, fr_train, en_dev, fr_dev, _, _ = data_utils.prepare_wmt_data(
-      config.data_dir, config.en_vocab_size, config.fr_vocab_size, config.load_embeddings)
+  en_train, fr_train, en_dev, fr_dev, _, _, embd_mat_en, embd_mat_fr = data_utils.prepare_wmt_data(
+      config.data_dir, config.en_vocab_size, config.fr_vocab_size, config.embedding_en_path, config.embedding_fr_path)
 
   with tf.Session() as sess:
     if not os.path.exists(FLAGS.model_dir):

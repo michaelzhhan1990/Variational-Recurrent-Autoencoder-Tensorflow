@@ -176,14 +176,6 @@ def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size,  embedding
   return embd_matrix_tensor
 
 
-
-
-
-
-
-
-
-
 def initialize_vocabulary(vocabulary_path):
   """Initialize vocabulary from file.
 
