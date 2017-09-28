@@ -101,8 +101,8 @@ def loadGloVe(filename,normalize_digits=True):
     return embd_dic,len(embd[0])
 
 
-
-def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size, embd_matrix_tensor, embedding_path=None,
+'''embd_matrix_tensor,'''
+def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size,  embedding_path=None,
                       tokenizer=None, normalize_digits=True):
   """Create vocabulary file (if it does not exist yet) from data file.
 
@@ -120,6 +120,7 @@ def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size, embd_matri
       if None, basic_tokenizer will be used.
     normalize_digits: Boolean; if true, all digits are replaced by 0s.
   """
+  embd_matrix_tensor = None
   if not gfile.Exists(vocabulary_path) :
     print("Creating vocabulary %s from data %s" % (vocabulary_path, data_path))
     vocab = {}
@@ -164,14 +165,15 @@ def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size, embd_matri
           if embedding_path!=None:
             embedding = np.asarray(id2embd_dic)
 
-            embd_matrix_tensor_ = tf.Variable(tf.constant(0.0, shape=[len(vocab_list), embedding_dim]),
+            embd_matrix_tensor = tf.Variable(tf.constant(0.0, shape=[len(vocab_list), embedding_dim]),
                              trainable=False, name="embd_matrix_tensor")
 
             embedding_placeholder = tf.placeholder(tf.float32, [len(vocab_list), embedding_dim])
             embedding_init = embd_matrix_tensor.assign(embedding_placeholder)
-            tf.session.run(embedding_init, feed_dict={embedding_placeholder: embedding})
+            tf.Session().run(embedding_init, feed_dict={embedding_placeholder: embedding})
 
-  #embd_ is the actual tensor of embeddings for each vocabulary
+    #embd_ is the actual tensor of embeddings for each vocabulary
+  return embd_matrix_tensor
 
 
 
@@ -305,9 +307,9 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
   w_fr=None
   w_en=None
 
-  create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,w_fr ,
+  w_fr=create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,
           embedding_path_fr,tokenizer)
-  create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,w_en,
+  w_en=create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,
           embedding_path_en,tokenizer)
 
 
