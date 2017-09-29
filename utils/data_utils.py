@@ -103,7 +103,7 @@ def loadGloVe(filename,normalize_digits=True):
 
 '''embd_matrix_tensor,'''
 def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size,  embedding_path=None,
-                      tokenizer=None, normalize_digits=True):
+                      tokenizer=None, normalize_digits=True,embedding_variable_name=None):
   """Create vocabulary file (if it does not exist yet) from data file.
 
   Data file is assumed to contain one sentence per line. Each sentence is
@@ -166,7 +166,7 @@ def create_vocabulary(vocabulary_path, data_path,max_vocabulary_size,  embedding
             embedding = np.asarray(id2embd_dic)
 
             embd_matrix_tensor = tf.Variable(tf.constant(0.0, shape=[len(vocab_list), embedding_dim]),
-                             trainable=False, name="embd_matrix_tensor")
+                             trainable=False, name=embedding_variable_name)
 
             embedding_placeholder = tf.placeholder(tf.float32, [len(vocab_list), embedding_dim])
             embedding_init = embd_matrix_tensor.assign(embedding_placeholder)
@@ -267,7 +267,7 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
 
 
 def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
-        embedding_path_en=None, embedding_path_fr=None,tokenizer=None):
+        embedding_path_en=None, embedding_path_fr=None,tokenizer=None,en_embd_name=None,fr_embd_name=None):
   """Get WMT data into data_dir, create vocabularies and tokenize data.
 
   Args:
@@ -300,9 +300,9 @@ def prepare_wmt_data(data_dir, en_vocabulary_size, fr_vocabulary_size,
   w_en=None
 
   w_fr=create_vocabulary(fr_vocab_path, train_path + ".out", fr_vocabulary_size,
-          embedding_path_fr,tokenizer)
+          embedding_path_fr,tokenizer,fr_embd_name)
   w_en=create_vocabulary(en_vocab_path, train_path + ".in", en_vocabulary_size,
-          embedding_path_en,tokenizer)
+          embedding_path_en,tokenizer,en_embd_name)
 
 
 

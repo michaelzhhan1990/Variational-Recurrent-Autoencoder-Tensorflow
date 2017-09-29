@@ -103,6 +103,7 @@ class Seq2SeqModel(object):
     self.learning_rate = tf.Variable(
         float(learning_rate), trainable=False, dtype=dtype)
 
+    # get or create a variable
     self.enc_embedding = tf.get_variable("enc_embedding", [source_vocab_size, size], dtype=dtype, initializer=weight_initializer())
 
     self.dec_embedding = tf.get_variable("dec_embedding", [target_vocab_size, size], dtype=dtype, initializer=weight_initializer())
