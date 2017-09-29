@@ -25,11 +25,12 @@
 *.log
 *.sql
 *.sqlite
-*.txt
+corpus/*.txt
 corpus/*.in
 corpus/*.out
-.idea/*.xml
-models/*.json
+.idea/*
+models/*
+
 # OS generated files #
 ######################
 .DS_Store
