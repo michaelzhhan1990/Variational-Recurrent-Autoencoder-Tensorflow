@@ -837,6 +837,8 @@ def variational_encoder_with_buckets(encoder_inputs, buckets, encoder,
     for j, bucket in enumerate(buckets):
       with variable_scope.variable_scope(variable_scope.get_variable_scope(),
                                          reuse=True if j > 0 else None):
+
+        # bucket[0] is the maximum of length till the bucket
         encoder_last_state = encoder(encoder_inputs[:bucket[0]])
         mean, logvar = enc_latent(encoder_last_state)
         means.append(mean)
