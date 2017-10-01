@@ -25,10 +25,9 @@
 *.log
 *.sql
 *.sqlite
-corpus/*.txt
-corpus/*.in
-corpus/*.out
-.idea/*
+corpus/*
+corpus/*
+corpus/*
 models/*
 
 # OS generated files #
@@ -36,6 +35,7 @@ models/*
 .DS_Store
 .DS_Store?
 ._*
+_*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
