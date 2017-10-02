@@ -9,7 +9,7 @@ from six.moves import xrange  # pylint: disable=redefined-builtin
 import utils.data_utils as data_utils
 import utils.read_data as read_data
 import seq2seq_model
-from . Flags import *
+from Flags import *
 
 def create_model(session, config, forward_only):
   """Create translation model and initialize or load parameters in session."""
@@ -66,7 +66,8 @@ def train(config):
   print("Preparing WMT data in %s" % config.data_dir)
   en_embd_name=""
   en_train, fr_train, en_dev, fr_dev, _, _, embd_mat_en, embd_mat_fr = data_utils.prepare_wmt_data(
-      config.data_dir, config.en_vocab_size, config.fr_vocab_size, config.embedding_en_path, config.embedding_fr_path,'enc_embedding','dec_embedding')
+      config.data_dir, config.en_vocab_size, config.fr_vocab_size)
+  #config.embedding_en_path, config.embedding_fr_path, 'enc_embedding', 'dec_embedding')
 
   with tf.Session() as sess:
     if not os.path.exists(FLAGS.model_dir):

@@ -9,9 +9,8 @@ from __future__ import print_function
 
 import json
 from Configuration import *
-#from training import *
 from test_embedding import *
-
+from training import *
 
 
 def main(_):
@@ -50,8 +49,8 @@ def main(_):
     with tf.Session() as sess:
       model = create_model(sess, sample_config, True)
       #n_sample(sess, model, config)
-  #elif FLAGS.do == "train":
-  #  train(config)
+  elif FLAGS.do == "train":
+    train(config)
   elif FLAGS.do == 'test_embedding':
     test_embedding(config)
 

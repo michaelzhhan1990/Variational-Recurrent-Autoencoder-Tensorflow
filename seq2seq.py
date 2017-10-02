@@ -110,7 +110,7 @@ def _extract_argmax_and_embed(embedding, output_projection=None,
     if output_projection is not None:
       prev = nn_ops.xw_plus_b(
           prev, output_projection[0], output_projection[1])
-    prev_symbol = math_ops.argmax(prev, 1)
+    prev_symbol = math_ops.argmax(prev, 1)# which symbol,
     # Note that gradients will not propagate through the second parameter of
     # embedding_lookup.
     emb_prev = embedding_ops.embedding_lookup(embedding, prev_symbol)
@@ -301,7 +301,7 @@ def embedding_rnn_decoder(decoder_inputs,
         update_embedding_for_previous)
     else:
     '''
-
+    # update the embedding or not
     loop_function = _extract_argmax_and_embed(
         embedding, output_projection,
         update_embedding_for_previous) if feed_previous else None

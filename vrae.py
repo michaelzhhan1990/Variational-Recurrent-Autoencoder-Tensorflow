@@ -156,7 +156,8 @@ def train(config):
   # Prepare WMT data.
   print("Preparing WMT data in %s" % config.data_dir)
   en_train, fr_train, en_dev, fr_dev, _, _ = data_utils.prepare_wmt_data(
-      config.data_dir, config.en_vocab_size, config.fr_vocab_size, config.load_embeddings)
+      config.data_dir, config.en_vocab_size, config.fr_vocab_size)
+    #''', config.load_embeddings'''
 
   with tf.Session() as sess:
     if not os.path.exists(FLAGS.model_dir):
