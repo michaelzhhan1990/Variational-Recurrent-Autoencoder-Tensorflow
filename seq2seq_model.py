@@ -259,9 +259,10 @@ class Seq2SeqModel(object):
     if not forward_only:
       self.gradient_norms = []
       self.updates = []
-      for b in xrange(len(buckets)):
+      for b in xrange(len(buckets)): # every bucket has a loss
         total_loss = self.losses[b] + self.KL_objs[b]
         gradients = tf.gradients(total_loss, params)
+        #avoid gradient exploding or vanish
         clipped_gradients, norm = tf.clip_by_global_norm(gradients,
                                                          max_gradient_norm)
         self.gradient_norms.append(norm)
